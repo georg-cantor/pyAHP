@@ -28,8 +28,13 @@ class EigenvalueMethod(Method):
     def estimate(self, preference_matrix):
         super()._check_matrix(preference_matrix)
         width = preference_matrix.shape[0]
+        if width <= 1:
+            raise ValueError("width=%d must be greater than 1." % width)
+        elif (width <= 2):
+            _, vectors = np.linalg.eig(preference_matrix)
 
-        _, vectors = eigs(preference_matrix, k=(width-2), sigma=width, which='LM', v0=np.ones(width))
+        else:
+            _, vectors = eigs(preference_matrix, k=(width-2), sigma=width, which='LM', v0=np.ones(width))
 
         real_vector = np.real([vec for vec in np.transpose(vectors) if not np.all(np.imag(vec))][:1])
         sum_vector = np.sum(real_vector)
